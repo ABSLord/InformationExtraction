@@ -1,0 +1,10 @@
+.wizard > .steps .current a, .wizard > .steps .current a:hover, .wizard > .steps .current a:active {
+            background: #2184be;
+            color: #fff;
+            cursor: default;
+}
+
+#previewMain {
+    max-width: 50%;
+    height: auto;
+}

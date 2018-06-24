@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        $(document).ready(function () {
+            $('#extractDoc').change(function () {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById('previewExtract').src = e.target.result;
+                };
+                reader.readAsDataURL(document.getElementById('extractDoc').files[0]);
+            });
+        });
+    </script>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form id="extractForm" action="" method="GET" style="margin: 20px 0 0 0;">
+                    <h3>Загрузить документ</h3>
+                    <label for="extractDoc">Image *</label>
+                    <input type="file" id="extractDoc" accept="image/*" class="required">
+                    <label for="extractModel">Выберите модель:</label>
+                    <select id="extractModel" style="margin: 10px">
+                    </select>
+                    <label for="extractFormat">Выберите формат:</label>
+                    <select id="extractFormat" style="margin: 10px">
+                    </select>
+                    <button type="button" id="extract" style="display:block;">Извлечь</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div class="container">
+                    <h3>Preview</h3>
+                    <img class="img-responsive" id="previewExtract" src="">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

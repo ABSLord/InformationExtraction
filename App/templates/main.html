@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        $(document).ready(function () {
+            var coords = {};
+            var jcrop_api;
+            var formData = new FormData();
+            var form = $("#mainForm");
+            var stp = form.children("div").steps({
+                headerTag: "h3",
+                bodyTag: "section",
+                transitionEffect: "slideLeft",
+                labels: {
+                    finish: "Сохранить",
+                    next: "Далее",
+                    previous: "Назад",
+                    loading: "Загрузка ..."
+                },
+                onStepChanging: function (event, currentIndex, newIndex) {
+                    if (newIndex == 1) {
+                        $('#previewMain').Jcrop({
+                            onSelect: getCoordinates,
+                            onChange: getCoordinates,
+                            boxWidth: 700, boxHeight: 700
+                        }, function () {
+                            jcrop_api = this;
+                        });
+                    }
+                    else {
+                        if ($('#previewMain').data('Jcrop')) {
+                            $('#previewMain').data('Jcrop').destroy();
+                        }
+                    }
+                    form.validate().settings.ignore = ":disabled,:hidden";
+                    return form.valid();
+                },
+                onFinishing: function (event, currentIndex) {
+                    form.validate().settings.ignore = ":disabled";
+                    return form.valid();
+                },
+                onFinished: function (event, currentIndex) {
+                    event.preventDefault();
+                    addDoc();
+                }
+            });
+            $('#image').change(function () {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById('previewMain').src = e.target.result;
+                };
+                reader.readAsDataURL(document.getElementById('image').files[0]);
+            });
+            var getCoordinates = function (c) {
+                document.getElementById('x_coord').innerText = 'X: ' + c.x;
+                document.getElementById('y_coord').innerText = 'Y: ' + c.y;
+                document.getElementById('width').innerText = 'Width: ' + c.w;
+                document.getElementById('height').innerText = 'Height: ' + c.h;
+            };
+            var addDoc = function () {
+                try {
+                    coords[document.getElementById('image').files[0].name.toString()] = jcrop_api.getSelection();
+                    if (formData.has(document.getElementById('image').files[0].name.toString())) {
+                        formData.delete(document.getElementById('image').files[0].name.toString());
+                    }
+                    formData.append(document.getElementById('image').files[0].name.toString(),
+                        document.getElementById('image').files[0]);
+                    stp.steps("previous");
+                    stp.steps("previous");
+                    clearDoc();
+                }
+                catch (e) {
+                    alert('Невозможно добавить документ к обучающей выборке: не выделена область');
+                }
+            };
+            var clearDoc = function () {
+                document.getElementById("image").value = "";
+                document.getElementById('x_coord').innerText = "";
+                document.getElementById('y_coord').innerText = "";
+                document.getElementById('width').innerText = "";
+                document.getElementById('height').innerText = "";
+            };
+            var sendDocs = function () {
+                formData.append('coords', JSON.stringify(coords));
+                formData.append('name', document.getElementById('modelName').value);
+                $.ajax({
+                    url: 'fit/',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        var w = window.open('about:blank');
+                        w.document.open();
+                        w.document.write(response);
+                        w.document.close();
+                    },
+                    error: function (e) {
+                        alert('load error!');
+                        console.log(e);
+                    }
+                });
+            };
+            document.getElementById('sendDocs').onclick = sendDocs;
+        });
+    </script>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form id="mainForm" action="" method="POST" target="_blank" enctype="multipart/form-data"
+                      style="margin: 20px 0 0 0;">
+                    <div>
+                        <h3>Загрузить документ</h3>
+                        <section>
+                            <label for="image">Image *</label>
+                            <input type="file" id="image" accept="image/*" class="required">
+                        </section>
+                        <h3>Выделить область</h3>
+                        <section>
+                            <p>Выделите с помощью мышки интересующую вас область</p>
+                            <p id="x_coord">X: </p>
+                            <p id="y_coord">Y: </p>
+                            <p id="width">Width: </p>
+                            <p id="height">Height: </p>
+                        </section>
+                        <h3>Обучить</h3>
+                        <section>
+                            <p>Сохранить размеченный документ?</p>
+                        </section>
+                    </div>
+                    <input type="text" placeholder="Введите название модели" id="modelName">
+                    <button type="button" id="sendDocs">Обучить</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div class="container">
+                    <h3>Preview</h3>
+                    <img class="img-responsive" id="previewMain" src="">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
