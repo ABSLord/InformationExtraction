@@ -18,25 +18,13 @@ def main(request):
         'main.html',
         {})
 
-
-@csrf_exempt
-def other_fit(request):
-    if request.method == "POST":
-        return HttpResponse('done!')
-
 # обучает новую модель
 @csrf_exempt
 def fit(request):
     if request.method == "POST":
-        return render(
-            request,
-            'text.html',
-            {'text': ''})
+        return HttpResponse("Модель обучена")
 
-    return render(
-        request,
-        'text.html',
-        {'text': ''})
+    return HttpResponse("Метод не поддерживается")
 
 
 # выделяет что-то с помощью уже обученной модели

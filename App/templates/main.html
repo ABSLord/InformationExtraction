@@ -68,6 +68,7 @@
                         document.getElementById('image').files[0]);
                     stp.steps("previous");
                     stp.steps("previous");
+
                     clearDoc();
                 }
                 catch (e) {
@@ -91,10 +92,9 @@
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        var w = window.open('about:blank');
-                        w.document.open();
-                        w.document.write(response);
-                        w.document.close();
+                        alert(response);
+                        location.reload();
+
                     },
                     error: function (e) {
                         alert('load error!');
@@ -109,7 +109,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <form id="mainForm" action="" method="POST" target="_blank" enctype="multipart/form-data"
+                <form id="mainForm" action="" method="POST" enctype="multipart/form-data"
                       style="margin: 20px 0 0 0;">
                     <div>
                         <h3>Загрузить документ</h3>
@@ -130,8 +130,10 @@
                             <p>Сохранить размеченный документ?</p>
                         </section>
                     </div>
-                    <input type="text" placeholder="Введите название модели" id="modelName">
-                    <button type="button" id="sendDocs">Обучить</button>
+                    <div style="margin: 10px">
+                        <input type="text" placeholder="Введите название модели" id="modelName" style="width: 60%; font-size: 17px">
+                        <button type="button" class="btn btn-success" id="sendDocs" style="width: 35%;">Завершить обучение</button>
+                    </div>
                 </form>
             </div>
             <div class="col-md-6">
