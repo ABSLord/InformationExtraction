@@ -1,12 +1,8 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-from PIL import Image
-import pytesseract
-from pytesseract import image_to_string
-from InformationExtraction.settings import TESSERACT_PATH
-
-pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
+from .Core.core import fit, predict
+import json
 
 LANG = 'rus'
 
@@ -22,6 +18,7 @@ def main(request):
 @csrf_exempt
 def fit(request):
     if request.method == "POST":
+        fit(request.POST['model_name'], request.FILES, json.loads(request.POST['coords']))
         return HttpResponse("Модель обучена")
 
     return HttpResponse("Метод не поддерживается")

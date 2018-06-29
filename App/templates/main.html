@@ -84,7 +84,7 @@
             };
             var sendDocs = function () {
                 formData.append('coords', JSON.stringify(coords));
-                formData.append('name', document.getElementById('modelName').value);
+                formData.append('model_name', document.getElementById('modelName').value);
                 $.ajax({
                     url: 'fit/',
                     type: 'POST',
