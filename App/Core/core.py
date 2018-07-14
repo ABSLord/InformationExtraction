@@ -4,6 +4,8 @@ from sklearn import preprocessing
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.externals import joblib
+from InformationExtraction.settings import BASE_DIR
+from ..models import ExtractionModel
 
 
 def bound_predict(tess_data, bound):
@@ -37,15 +39,23 @@ def train_and_save_model(model_name, images, coords):
     clf = KNeighborsClassifier()
     s = StandardScaler()
     clf.fit(frame, Y)
-    from InformationExtraction.settings import BASE_DIR
-    from ..models import ExtractionModel
     joblib.dump(clf, os.path.join(BASE_DIR, 'App', 'static', 'models', model_name + '.joblib'), compress=9)
+    joblib.dump(le, os.path.join(BASE_DIR, 'App', 'static', 'models', model_name + '_le.joblib'), compress=9)
     ExtractionModel.objects.get_or_create(name=model_name)
 
+
 def predict(model, image):
-    pass
-
-
+    frame_test = image_to_dataframe(image[1])
+    frame_test = frame_test[['left', 'top', 'width', 'height', 'text']][frame_test['text'] != ''].dropna()
+    clf = joblib.load(os.path.join(BASE_DIR, 'App', 'static', 'models', model + '.joblib'))
+    le = joblib.load(os.path.join(BASE_DIR, 'App', 'static', 'models', model + '_le.joblib'))
+    words_test = le.transform(frame_test[['text']])
+    n = frame_test.columns[4]
+    frame_test.drop(n, axis=1, inplace=True)
+    frame_test[n] = words_test
+    y = clf.predict(frame_test)
+    words = le.inverse_transform(words_test)
+    return [words[i] for i in range(len(words)) if y[i]]
 
 ########################################################
 #  тест на реальных данных

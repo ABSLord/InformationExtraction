@@ -8,6 +8,20 @@
 {% block content %}
     <script>
         $(document).ready(function () {
+            $.ajax({
+                url: '/InformationExtraction/get_models/',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    //debugger;
+                    $.each(response, function (key, value) {
+                        $('#extractModel')
+                            .append($("<option></option>")
+                                .attr("value", key)
+                                .text(value.name));
+                    });
+                }
+            });
             $('#extractDoc').change(function () {
                 var reader = new FileReader();
 
@@ -16,6 +30,30 @@
                 };
                 reader.readAsDataURL(document.getElementById('extractDoc').files[0]);
             });
+            var formData = new FormData();
+            var extract = function () {
+                formData.append('model', $("#extractModel").text());
+                formData.append('format', $("#extractFormat").text());
+                formData.append(document.getElementById('extractDoc').files[0].name.toString(),
+                    document.getElementById('extractDoc').files[0]);
+                $.ajax({
+                    url: '',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        var w = window.open();
+                        $(w.document.body).html(response);
+                        location.reload();
+                    },
+                    error: function (e) {
+                        alert('load error!');
+                        console.log(e);
+                    }
+                });
+            };
+            document.getElementById('extract').onclick = extract;
         });
     </script>
     <div class="container">
@@ -29,6 +67,7 @@
                     </select>
                     <label for="extractFormat">Выберите формат:</label>
                     <select id="extractFormat" style="margin: 10px">
+                        <option>text</option>
                     </select>
                     <button type="button" id="extract" style="display:block;">Извлечь</button>
                 </form>
