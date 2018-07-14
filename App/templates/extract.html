@@ -32,8 +32,8 @@
             });
             var formData = new FormData();
             var extract = function () {
-                formData.append('model', $("#extractModel").text());
-                formData.append('format', $("#extractFormat").text());
+                formData.append('model', $("#extractModel option:selected").text());
+                formData.append('format', $("#extractFormat option:selected").text());
                 formData.append(document.getElementById('extractDoc').files[0].name.toString(),
                     document.getElementById('extractDoc').files[0]);
                 $.ajax({

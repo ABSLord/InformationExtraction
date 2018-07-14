@@ -46,6 +46,7 @@ def extract(request):
     )
 
 
+# возвращает все сохраненные названия моделей
 @csrf_exempt
 def get_models(request):
     if request.method == "GET":

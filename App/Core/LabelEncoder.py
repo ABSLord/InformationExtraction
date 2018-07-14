@@ -1,17 +1,16 @@
-# custom label encoder with new labels with support for new labels
+# custom label encoder with support for new labels
 # idea from https://github.com/scikit-learn/scikit-learn/pull/3483
 
 import operator
 import warnings
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils import deprecated, column_or_1d
+from sklearn.utils import column_or_1d
 
 
 class CustomLabelEncoder(BaseEstimator, TransformerMixin):
 
     def __init__(self, new_labels="raise"):
-        """Constructor"""
         self.new_labels = new_labels
         self.new_label_mapping_ = {}
         self.fit_labels_ = []
@@ -31,7 +30,6 @@ class CustomLabelEncoder(BaseEstimator, TransformerMixin):
             return self.fit_labels_
 
     def set_classes(self, classes):
-        """Set the classes via property."""
         self.fit_labels_ = classes
 
     classes_ = property(get_classes, set_classes)
@@ -50,15 +48,6 @@ class CustomLabelEncoder(BaseEstimator, TransformerMixin):
         return self
 
     def fit_transform(self, y):
-        """Fit label encoder and return encoded labels
-        Parameters
-        ----------
-        y : array-like of shape [n_samples]
-            Target values.
-        Returns
-        -------
-        y : array-like of shape [n_samples]
-        """
         # Check new_labels parameter
         if self.new_labels not in ["update", "raise"] and \
                 type(self.new_labels) not in [int]:
@@ -72,17 +61,7 @@ class CustomLabelEncoder(BaseEstimator, TransformerMixin):
         return y
 
     def transform(self, y):
-        """Transform labels to normalized encoding.
-        Parameters
-        ----------
-        y : array-like of shape [n_samples]
-            Target values.
-        Returns
-        -------
-        y : array-like of shape [n_samples]
-        """
         self._check_fitted()
-
         classes = np.unique(y)
         if len(np.intersect1d(classes, self.get_classes())) < len(classes):
             # Get the new classes
@@ -133,15 +112,6 @@ class CustomLabelEncoder(BaseEstimator, TransformerMixin):
         return np.searchsorted(self.fit_labels_, y)
 
     def inverse_transform(self, y):
-        """Transform labels back to original encoding.
-        Parameters
-        ----------
-        y : numpy array of shape [n_samples]
-            Target values.
-        Returns
-        -------
-        y : numpy array of shape [n_samples]
-        """
         self._check_fitted()
 
         if type(self.new_labels) in [int]:
