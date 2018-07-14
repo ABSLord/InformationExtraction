@@ -6,20 +6,22 @@ from PIL import Image
 import cv2
 
 ########################################################
-#  Всякие вспомогательные функции
+#  Вспомогательные функции
 ########################################################
+
 
 def string_to_dataframe(string):
     data = list(map(lambda val: val.split('\t'), string.split('\n')))
     return pd.DataFrame(data[1:], columns=data[0])
+
 
 def image_to_dataframe(path):
     img = Image.open(path)
     frame = string_to_dataframe(pytesseract.image_to_data(img, lang=LANG))
     return frame
 
+
 def extract_from_img(path, x, y, w, h):
-    #  'data3/01.png', 1264, 870, 600, 100
     img1 = Image.open(path)
     img2 = extract_data_from_img(path, x, y, w, h)
     frame1 = string_to_dataframe(pytesseract.image_to_data(img1, lang=LANG))

@@ -2,12 +2,12 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.core import serializers
 from .Core.core import train_and_save_model, predict
 from .models import ExtractionModel
 import json
 
 LANG = 'rus'
+
 
 #  главная страница
 @csrf_exempt
@@ -32,9 +32,9 @@ def fit(request):
 def extract(request):
     if request.method == "POST":
         model = request.POST['model'].strip()
-        format = request.POST['format'].strip()
+        #  format = request.POST['format'].strip()
         img = list(request.FILES.items())[0]
-        words = predict(model,img)
+        words = predict(model, img)
         return render(
             request,
             'text.html',
