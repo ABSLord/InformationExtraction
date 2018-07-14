@@ -1,11 +1,11 @@
 from .tools import *
 import pandas as pd
-from sklearn import preprocessing
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.externals import joblib
 from InformationExtraction.settings import BASE_DIR
 from ..models import ExtractionModel
+from .LabelEncoder import CustomLabelEncoder
 
 
 def bound_predict(tess_data, bound):
@@ -31,7 +31,7 @@ def train_and_save_model(model_name, images, coords):
         Y += y
     frame = pd.concat(frames)
     words = frame[['text']]
-    le = preprocessing.LabelEncoder()
+    le = CustomLabelEncoder(new_labels="update")
     words = le.fit_transform(words)
     n = frame.columns[4]
     frame.drop(n, axis=1, inplace=True)
@@ -56,6 +56,9 @@ def predict(model, image):
     y = clf.predict(frame_test)
     words = le.inverse_transform(words_test)
     return [words[i] for i in range(len(words)) if y[i]]
+
+
+
 
 ########################################################
 #  тест на реальных данных
@@ -87,7 +90,7 @@ def document_example():
     words = frame[['text']]
     words_gl = frame_gl[['text']]
     from nltk.stem.snowball import SnowballStemmer
-    le = preprocessing.LabelEncoder()
+    le = CustomLabelEncoder(new_labels="update")
     le.fit(words_gl)
     words = le.transform(words)
     words_gl = frame_gl[['text']]

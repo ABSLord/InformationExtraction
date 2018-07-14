@@ -38,7 +38,7 @@ def extract(request):
         return render(
             request,
             'text.html',
-            {'words': ' '.join(words)}
+            {'words': ' '.join([w[0] for w in words])}
         )
     return render(
         request,
