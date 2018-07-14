@@ -1,13 +1,13 @@
 from .tools import *
-from sklearn import preprocessing
 import pandas as pd
+from sklearn import preprocessing
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.externals import joblib
 
 
 def bound_predict(tess_data, bound):
-    word_pos = list(map(lambda x: int(x), tess_data[:4]))
+    word_pos = list(map(lambda x: float(x), tess_data[:4]))
     if word_pos[0] >= bound[0] \
             and word_pos[1] >= bound[1] \
             and word_pos[0] + word_pos[2] <= bound[0] + bound[2] \
@@ -17,9 +17,10 @@ def bound_predict(tess_data, bound):
         return False
 
 
-def fit(model_name, images, coords):
+def train_and_save_model(model_name, images, coords):
     frames = []
     Y = []
+    coords = dict({coords[0]: list(map(lambda x: float(x), coords[1].split(';'))) for coords in coords.items()})
     for img in images.items():
         frame = image_to_dataframe(img[1])
         frame = frame[['left', 'top', 'width', 'height', 'text']][frame['text'] != ''].dropna()
@@ -36,8 +37,10 @@ def fit(model_name, images, coords):
     clf = KNeighborsClassifier()
     s = StandardScaler()
     clf.fit(frame, Y)
-    from InformationExtraction.settings import STATIC_URL
-    joblib.dump(clf, STATIC_URL + model_name + '.joblib', compress=9)
+    from InformationExtraction.settings import BASE_DIR
+    from ..models import ExtractionModel
+    joblib.dump(clf, os.path.join(BASE_DIR, 'App', 'static', 'models', model_name + '.joblib'), compress=9)
+    ExtractionModel.objects.get_or_create(name=model_name)
 
 def predict(model, image):
     pass

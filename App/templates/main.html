@@ -83,6 +83,8 @@
             };
             var clearDoc = function () {
                 document.getElementById("image").value = "";
+                document.getElementById("previewMain").src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+                document.getElementById("previewMain").alt = "";
                 document.getElementById('x_coord').innerText = "";
                 document.getElementById('y_coord').innerText = "";
                 document.getElementById('width').innerText = "";
@@ -143,7 +145,7 @@
             <div class="col-md-6">
                 <div class="container">
                     <h3>Preview</h3>
-                    <img class="img-responsive" id="previewMain" src="">
+                    <img class="img-responsive" id="previewMain" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
                 </div>
             </div>
         </div>

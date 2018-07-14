@@ -15,7 +15,7 @@ def string_to_dataframe(string):
 
 def image_to_dataframe(path):
     img = Image.open(path)
-    frame = string_to_dataframe(pytesseract.image_to_data(img1, lang=LANG))
+    frame = string_to_dataframe(pytesseract.image_to_data(img, lang=LANG))
     return frame
 
 def extract_from_img(path, x, y, w, h):

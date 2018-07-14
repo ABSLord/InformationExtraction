@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-from .Core.core import fit, predict
+from .Core.core import train_and_save_model, predict
 import json
 
 LANG = 'rus'
@@ -18,7 +18,7 @@ def main(request):
 @csrf_exempt
 def fit(request):
     if request.method == "POST":
-        fit(request.POST['model_name'], request.FILES, json.loads(request.POST['coords']))
+        train_and_save_model(request.POST['model_name'], request.FILES, json.loads(request.POST['coords']))
         return HttpResponse("Модель обучена")
 
     return HttpResponse("Метод не поддерживается")
