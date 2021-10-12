@@ -1,7 +1,7 @@
 Django==2.0.12
 nltk==3.4.5
 numpy==1.14.1
-opencv-python==3.4.0.12
+opencv-python==4.2.0.32
 pandas==0.23.1
 Pillow==6.2.0
 pytesseract==0.2.0
