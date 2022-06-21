@@ -1,6 +1,6 @@
 Django==2.0.12
 nltk==3.4.5
-numpy==1.14.1
+numpy==1.22.0
 opencv-python==3.4.0.12
 pandas==0.23.1
 Pillow==6.2.0
